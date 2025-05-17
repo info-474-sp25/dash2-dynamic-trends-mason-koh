@@ -1,4 +1,4 @@
-// 1: SET GLOBAL VARIABLES
+// 1: SET GLOBAL VARIABLE
 const margin = { top: 50, right: 30, bottom: 60, left: 70 };
 const width = 900 - margin.left - margin.right;
 const height = 400 - margin.top - margin.bottom;
