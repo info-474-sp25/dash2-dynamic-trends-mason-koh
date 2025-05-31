@@ -1,10 +1,8 @@
-// 1: SET GLOBAL VARIABLE
 const margin = { top: 50, right: 30, bottom: 60, left: 70 };
 const width = 900 - margin.left - margin.right;
 const height = 400 - margin.top - margin.bottom;
 
-// Create SVG containers for both charts
-const svgLine = d3.select("#lineChart1") // If you change this ID, you must change it in index.html too
+const svgLine = d3.select("#lineChart1")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -18,10 +16,6 @@ const svg2_RENAME = d3.select("#lineChart2")
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-// (If applicable) Tooltip element for interactivity
-// const tooltip = ...
-
-// 2.a: LOAD...
 d3.csv("weather.csv").then(data => {
     const cities = Array.from(new Set(data.map(d => d.city))).sort();
     const dropdown = d3.select("#citySelect");
@@ -39,13 +33,7 @@ d3.csv("weather.csv").then(data => {
         const selectedCity = d3.select(this).property("value");
         drawLineChart(data, selectedCity);
     });
-    
-    
-    // ==========================================
-    //         CHART 2 (if applicable)
-    // ==========================================
 
-    // Count record highs and lows
     const recordCounts = { "Record Highs": {}, "Record Lows": {} };
 
     data.forEach(d => {
@@ -71,16 +59,13 @@ d3.csv("weather.csv").then(data => {
 
     let currentType = "Record Highs";
 
-    // 3.b: SET SCALES FOR CHART 2
     const xScale2 = d3.scaleBand()
         .domain(years)
         .range([0, width])
         .padding(0.2);
 
-    const yScale2 = d3.scaleLinear()
-        .range([height, 0]);
+    const yScale2 = d3.scaleLinear().range([height, 0]);
 
-    // 4.b: PLOT DATA FOR CHART 2
     const updateChart2 = (type) => {
         const chartData = dataByType(type);
         yScale2.domain([0, d3.max(chartData, d => d.count) + 1]);
@@ -123,16 +108,13 @@ d3.csv("weather.csv").then(data => {
             .text(`${type} Set Per Year`);
     };
 
-    // 5.b: ADD AXES FOR CHART 2
     svg2_RENAME.append("g")
         .attr("class", "x-axis")
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(xScale2).tickValues(xScale2.domain().filter((d, i) => !(i % 10))));
 
-    svg2_RENAME.append("g")
-        .attr("class", "y-axis");
+    svg2_RENAME.append("g").attr("class", "y-axis");
 
-    // 6.b: ADD LABELS FOR CHART 2
     svg2_RENAME.append("text")
         .attr("class", "title")
         .attr("x", width / 2)
@@ -156,7 +138,6 @@ d3.csv("weather.csv").then(data => {
         .attr("text-anchor", "middle")
         .text("Number of Records");
 
-    // 7.b: ADD INTERACTIVITY FOR CHART 2
     const tooltip = d3.select("body")
         .append("div")
         .style("position", "absolute")
@@ -167,21 +148,14 @@ d3.csv("weather.csv").then(data => {
         .style("pointer-events", "none")
         .style("opacity", 0);
 
-    d3.select("body")
-        .append("div")
-        .style("text-align", "center")
-        .style("margin", "10px")
-        .append("button")
-        .text("Toggle Record High/Low")
-        .on("click", () => {
-            currentType = currentType === "Record Highs" ? "Record Lows" : "Record Highs";
-            updateChart2(currentType);
-        });
+    // Hook up new record type dropdown
+    d3.select("#recordType").on("change", function () {
+        currentType = this.value;
+        updateChart2(currentType);
+    });
 
     updateChart2(currentType);
-
 });
-
 
 function drawLineChart(data, city) {
     svgLine.selectAll("*").remove();
@@ -189,15 +163,14 @@ function drawLineChart(data, city) {
     d3.select("#lineChartTitle").text(`Daily Max Temperatures in ${city}`);
 
     const parseDate = d3.timeParse("%m/%d/%Y");
-    
+
     const filteredData = data
         .filter(d => d.city === city)
         .map(d => ({
-        date: parseDate(d.date),
-        maxTemp: +d.actual_max_temp
-    }));
+            date: parseDate(d.date),
+            maxTemp: +d.actual_max_temp
+        }));
 
-    // 3.a: SET SCALES FOR CHART 1
     const lineXScale = d3.scaleTime()
         .domain(d3.extent(filteredData, d => d.date))
         .range([0, width]);
@@ -205,9 +178,7 @@ function drawLineChart(data, city) {
     const lineYScale = d3.scaleLinear()
         .domain([d3.min(filteredData, d => d.maxTemp) - 5, d3.max(filteredData, d => d.maxTemp) + 5])
         .range([height, 0]);
-    
 
-    // 4.a: PLOT DATA FOR CHART 1
     const line = d3.line()
         .x(d => lineXScale(d.date))
         .y(d => lineYScale(d.maxTemp));
@@ -219,7 +190,6 @@ function drawLineChart(data, city) {
         .attr("stroke-width", 2)
         .attr("d", line);
 
-    // 5.a: ADD AXES FOR CHART 1
     svgLine.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(lineXScale).tickFormat(d3.timeFormat("%b")));
@@ -227,8 +197,6 @@ function drawLineChart(data, city) {
     svgLine.append("g")
         .call(d3.axisLeft(lineYScale));
 
-
-    // 6.a: ADD LABELS FOR CHART 1
     svgLine.append("text")
         .attr("class", "title")
         .attr("x", width / 2)
@@ -243,7 +211,7 @@ function drawLineChart(data, city) {
         .attr("y", height + margin.bottom - 10)
         .attr("text-anchor", "middle")
         .text("Date");
-        
+
     svgLine.append("text")
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
@@ -251,4 +219,4 @@ function drawLineChart(data, city) {
         .attr("x", -height / 2)
         .attr("text-anchor", "middle")
         .text("Temperature (°F)");
-};
+}
