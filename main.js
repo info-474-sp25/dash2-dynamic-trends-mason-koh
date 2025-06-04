@@ -160,7 +160,7 @@ d3.csv("weather.csv").then(data => {
 function drawLineChart(data, city) {
     svgLine.selectAll("*").remove();
 
-    d3.select("#lineChartTitle").text(`Daily Max Temperatures in ${city}`);
+    d3.select("#lineChartTitle").text(`Daily Max Temperatures in ${city} (2015-16)`);
 
     const parseDate = d3.timeParse("%m/%d/%Y");
 
