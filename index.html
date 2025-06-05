@@ -21,15 +21,6 @@
             <label for="citySelect">Select a City:</label>
             <select id="citySelect"></select>
         </div>
-
-        <!-- DELETE THE FOLLOWING DIV IF YOU ONLY HAVE 1 WIDGET. -->
-        <div class="item">
-            <label for="recordType">Record Type:</label>
-            <select id="recordType">
-                <option value="Record Highs">Record Highs</option>
-                <option value="Record Lows">Record Lows</option>
-            </select>
-        </div>
     </div>
 
     <!-- CHART(S) -->
@@ -38,6 +29,13 @@
         <svg id="lineChart1" width="900" height="400"></svg> <!-- If you change this ID name, you must change it in main.js too -->
     </div>
     <!-- DELETE THE FOLLOWING DIV IF YOU ONLY HAVE 1 CHART. -->
+    <div class="item">
+        <label for="recordType">Record Type:</label>
+        <select id="recordType">
+            <option value="Record Highs">Record Highs</option>
+            <option value="Record Lows">Record Lows</option>
+        </select>
+    </div>
     <div class="item chart-container">
         <h2>Record Temperature Extremes Per Year</h2>
         <svg id="lineChart2" width="900" height="400"></svg>
